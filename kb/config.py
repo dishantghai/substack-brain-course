@@ -10,7 +10,8 @@ class Settings(BaseSettings):
 
     # --- External services ---
     anthropic_api_key: str = ""
-    openai_api_key: str = ""
+    openrouter_api_key: str = ""
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
     database_url: str = (
         "postgresql+asyncpg://substack_brain:substack_brain_pw@localhost:5433/substack_brain"
     )
@@ -28,7 +29,8 @@ class Settings(BaseSettings):
     chunk_overlap: int = 150
 
     # --- Embeddings ---
-    embedding_model: str = "text-embedding-3-small"
+    # OpenRouter model ids are "<provider>/<model>".
+    embedding_model: str = "openai/text-embedding-3-small"
     embedding_dimensions: int = 1536
     embedding_batch_size: int = 96
     # Verified 2026-09-19 against OpenAI's pricing page; no output-token cost for embeddings.

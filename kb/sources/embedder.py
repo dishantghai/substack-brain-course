@@ -1,4 +1,5 @@
-"""OpenAI embeddings, batched into as few provider calls as possible.
+"""OpenRouter embeddings (OpenAI-compatible API), batched into as few provider
+calls as possible.
 
 Returns a JSON-serializable dict carrying a top-level `"usage"` key — the
 convention `CostCaptureMiddleware` (`kb/inngest_client.py`) recognizes to
@@ -17,10 +18,12 @@ _client: AsyncOpenAI | None = None
 
 def _get_client() -> AsyncOpenAI:
     # Created on first use, not at import time, so modules that import this one
-    # (and the tests) load fine without OPENAI_API_KEY.
+    # (and the tests) load fine without OPENROUTER_API_KEY.
     global _client
     if _client is None:
-        _client = AsyncOpenAI(api_key=settings.openai_api_key)
+        _client = AsyncOpenAI(
+            api_key=settings.openrouter_api_key, base_url=settings.openrouter_base_url
+        )
     return _client
 
 

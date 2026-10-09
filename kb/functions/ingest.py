@@ -21,7 +21,7 @@ backfill's "skip what's stored" filter and by the upserts above.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta  # noqa: F401  (used by the disabled throttle)
 from typing import cast
 
 import inngest
@@ -54,22 +54,23 @@ from kb.sources.parser import parse_html
             limit=settings.concurrency_per_publication,
         )
     ],
-    # No key: the OpenAI quota is shared by every publication, so the limit is too.
-    # Throttling limits run STARTS, not steps; embed_texts sends a whole article
-    # in one request, which keeps "runs per minute" close to "requests per minute".
-    throttle=inngest.Throttle(
-        limit=settings.ingest_runs_per_minute,
-        period=timedelta(minutes=1),
-    ),
-    # Priority is a time shift in seconds, not a rank: +600 schedules a manual run
-    # as if it had arrived 10 minutes earlier, and -600 pushes backfill runs 10
-    # minutes later, so a manual article gets up to 20 minutes of head start.
-    priority=inngest.Priority(
-        run=(
-            f"event.data.via == 'manual' ? {settings.priority_manual_s} "
-            f": {settings.priority_backfill_s}"
-        )
-    ),
+    # Week 2 flow control, disabled to run with week 1's settings:
+    # # No key: the OpenAI quota is shared by every publication, so the limit is too.
+    # # Throttling limits run STARTS, not steps; embed_texts sends a whole article
+    # # in one request, which keeps "runs per minute" close to "requests per minute".
+    # throttle=inngest.Throttle(
+    #     limit=settings.ingest_runs_per_minute,
+    #     period=timedelta(minutes=1),
+    # ),
+    # # Priority is a time shift in seconds, not a rank: +600 schedules a manual run
+    # # as if it had arrived 10 minutes earlier, and -600 pushes backfill runs 10
+    # # minutes later, so a manual article gets up to 20 minutes of head start.
+    # priority=inngest.Priority(
+    #     run=(
+    #         f"event.data.via == 'manual' ? {settings.priority_manual_s} "
+    #         f": {settings.priority_backfill_s}"
+    #     )
+    # ),
     retries=3,
 )
 async def ingest_article(ctx: inngest.Context) -> dict[str, object]:

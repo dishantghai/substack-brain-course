@@ -6,7 +6,9 @@ both listen to `kb/publication.added`, so only one of them can be active.
 
 import inngest
 
-from kb.functions.backfill import backfill_publication
+#from kb.functions.backfill import backfill_publication
 from kb.functions.ingest import ingest_article
+from kb.functions.discovery import add_publication
 
-FUNCTIONS: list[inngest.Function] = [backfill_publication, ingest_article]
+# FUNCTIONS: list[inngest.Function] = [backfill_publication, ingest_article]
+FUNCTIONS: list[inngest.Function] = [add_publication, ingest_article]
